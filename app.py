@@ -1,9 +1,10 @@
 from flask import Flask, request, render_template_string
 import random
+from datetime import datetime
 
 app = Flask(__name__)
 
-data = []
+data = {}
 affinity = 0
 
 comments = [
@@ -30,11 +31,14 @@ html = """
 {% endif %}
 
 <h2>履歴</h2>
-<ul>
-{% for d in data %}
-  <li>{{d['exercise']}} - {{d['reps']}}回</li>
+{% for date, logs in data.items() %}
+  <h3>{{date}}</h3>
+  <ul>
+  {% for d in logs %}
+    <li>{{d['exercise']}} - {{d['reps']}}回</li>
+  {% endfor %}
+  </ul>
 {% endfor %}
-</ul>
 """
 
 @app.route("/", methods=["GET", "POST"])
@@ -46,7 +50,16 @@ def index():
         exercise = request.form["exercise"]
         reps = request.form["reps"]
 
-        data.append({"exercise": exercise, "reps": reps})
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        if today not in data:
+            data[today] = []
+
+        data[today].append({
+            "exercise": exercise,
+            "reps": reps
+        })
+
         affinity += int(reps) // 10 + 1
 
         message = random.choice(comments)
@@ -54,4 +67,4 @@ def index():
     return render_template_string(html, data=data, message=message, affinity=affinity)
 
 if __name__ == "__main__":
-    app.run(debug=True) 
+    app.run(debug=True)
