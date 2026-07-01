@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "PauseStep",
+  "version": "0.6.0",
+  "description": "SNS利用前に介入し、YouTubeではアクティブな利用30分ごとに継続するか選べるChrome拡張機能です。",
+  "permissions": [
+    "storage",
+    "tabs",
+    "alarms"
+  ],
+  "host_permissions": [
+    "*://www.youtube.com/*",
+    "*://x.com/*",
+    "*://www.instagram.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "PauseStepの設定と結果を開く"
+  },
+  "options_page": "options/options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.youtube.com/*",
+        "*://x.com/*",
+        "*://www.instagram.com/*"
+      ],
+      "css": [
+        "content/intervention.css"
+      ],
+      "js": [
+        "content/intervention.js"
+      ],
+      "run_at": "document_start"
+    }
+  ]
+}
